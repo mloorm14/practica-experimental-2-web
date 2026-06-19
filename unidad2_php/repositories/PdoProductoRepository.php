@@ -47,6 +47,7 @@ class PdoProductoRepository implements ProductoRepositoryInterface {
 
     public function delete(int $id, int $usuarioId): bool {
         $stmt = $this->pdo->prepare('DELETE FROM productos WHERE id = ? AND usuario_id = ?');
-        return $stmt->execute([$id, $usuarioId]);
+        $stmt->execute([$id, $usuarioId]);
+        return $stmt->rowCount() === 1; // true solo si se eliminó exactamente 1 fila
     }
 }

@@ -6,6 +6,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import org.mindrot.jbcrypt.BCrypt;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.sql.*;
 import java.util.Base64;
@@ -39,7 +41,10 @@ public class RegisterServlet extends HttpServlet {
                 ? (String) session.getAttribute("csrf_token")
                 : null;
 
-        if (tokenSes == null || !tokenSes.equals(tokenForm)) {
+        if (tokenSes == null || tokenForm == null ||
+                !MessageDigest.isEqual(
+                        tokenSes.getBytes(StandardCharsets.UTF_8),
+                        tokenForm.getBytes(StandardCharsets.UTF_8))) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Token CSRF inválido");
             return;
         }
